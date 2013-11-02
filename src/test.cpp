@@ -1,16 +1,20 @@
+/** \file test.cpp
+ * \brief A sample program to ensure that the Variable class is performing 
+ *    properly.
+ * \author S. V. Paulauskas
+ * \date 11 November 2013
+ */
 #include <iostream>
 
-#include "PhysConstants.hpp"
+#include "Variable.hpp"
 
 using namespace std;
 
 int main () {
-    PhysConstants constants;
-    Variable electronCharge = constants.GetConstant("electronCharge");
+    Variable var;
+    var=Variable(123.45, 0.6789, "keV/MeV");
 
-    double chg = constants.GetConstant("electronCharge").GetValue();
 
-    cout << chg << " " << endl;
-    std::cout << electronCharge.GetValue() << " " << electronCharge.GetError() 
-              <<  " " << electronCharge.GetUnits() << endl;
+    std::cout << var.GetValue() << " +- " << var.GetError() 
+              <<  " " << var.GetUnits() << endl;
 }
