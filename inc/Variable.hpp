@@ -24,6 +24,11 @@ public:
     };
     ~Variable(){};
 
+    void SetValue(const double &a) {value_ = a;};
+    void SetError(const double &a) {error_ = a;};
+    void SetUnits(const std::string &a) {units_ = a;};
+    
+
     double GetValue(void) const {return(value_);};
     double GetError(void) const {return(error_);};
     std::string GetUnits(void) const {return(units_);};
