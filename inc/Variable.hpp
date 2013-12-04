@@ -15,6 +15,8 @@
 #include <string>
 #include <sstream>
 
+#include <cmath>
+
 class Variable {
 public:
     Variable(){};
@@ -60,12 +62,48 @@ public:
         else
             return(false);
     };
+
+    //Overloading the Unitary operators here
+    inline Variable operator+(const Variable&v) {
+        if(!UnitCheck(this->GetUnits(), v.GetUnits()))
+            return(Variable(0.0,0.0,""));
+        double val = this->GetValue() + v.GetValue();
+        double err = PmError(this->GetError(),v.GetError());
+        std::string unit = this->GetUnits();
+        return(Variable(val,err,unit));
+    };
+    inline Variable operator-(const Variable&v) {
+        if(!UnitCheck(this->GetUnits(), v.GetUnits()))
+            return(Variable(0.0,0.0,""));
+        double val = this->GetValue() - v.GetValue();
+        double err = PmError(this->GetError(),v.GetError());
+        std::string unit = this->GetUnits();
+        return(Variable(val,err,unit));
+    };
+    
+    inline Variable operator*(const Variable&v) {
+        if(!UnitCheck(this->GetUnits(), v.GetUnits()))
+            return(Variable(0.0,0.0,""));
+        double val = this->GetValue() * v.GetValue();
+        double err = MdError(*this,v);
+        std::string unit = this->GetUnits();
+        return(Variable(val,err,unit));
+    };
+
+    inline Variable operator/(const Variable&v) {
+        if(!UnitCheck(this->GetUnits(), v.GetUnits()))
+            return(Variable(0.0,0.0,""));
+        double val = this->GetValue() / v.GetValue();
+        double err = MdError(*this,v);
+        std::string unit = this->GetUnits();
+        return(Variable(val,err,unit));
+    };
+
         
     inline void SetValue(const double &a) {value_ = a;};
     inline void SetError(const double &a) {error_ = a;};
     inline void SetUnits(const std::string &a) {units_ = a;};
     
-
     inline double GetValue(void) const {return(value_);};
     inline double GetError(void) const {return(error_);};
     inline std::string GetUnits(void) const {return(units_);};
@@ -89,5 +127,14 @@ private:
             return(false);
         }
     };
+
+    double PmError(const double &val1, const double &val2) {
+        return(sqrt(val1*val1+val2*val2));
+    };
+    double MdError(const Variable &v1, const Variable &v2) {
+        return(v1.GetValue()*v2.GetValue()*
+               sqrt(v1.GetError()*v1.GetError()/v1.GetValue()/v1.GetValue() +
+                    v2.GetError()*v2.GetError()/v2.GetValue()/v2.GetValue()));
+    }
 }; //class Variable
 #endif //__VARIABLE_HPP__

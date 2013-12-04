@@ -36,5 +36,7 @@ int main () {
     bool temp1 = var1 == var3;
     cout << endl
          << "Does var1 = " << var1.Output() << " compare equal to var3 = " 
-         << var3.Output() << "?!?!" << endl << "Answer: " << temp1 << endl; 
+         << var3.Output() << "?!?!" << endl << "Answer: " << temp1 << endl;
+
+    cout << "We are going to do some maths now." << endl;
 }
