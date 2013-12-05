@@ -80,25 +80,21 @@ public:
         std::string unit = this->GetUnits();
         return(Variable(val,err,unit));
     };
-    
     inline Variable operator*(const Variable&v) {
-        if(!UnitCheck(this->GetUnits(), v.GetUnits()))
-            return(Variable(0.0,0.0,""));
         double val = this->GetValue() * v.GetValue();
-        double err = MdError(*this,v);
-        std::string unit = this->GetUnits();
-        return(Variable(val,err,unit));
+        double err = MdError(val,*this,v);
+        std::stringstream ss;
+        ss << this->GetUnits() << "*" << v.GetUnits();
+        return(Variable(val,err,ss.str()));
     };
-
     inline Variable operator/(const Variable&v) {
-        if(!UnitCheck(this->GetUnits(), v.GetUnits()))
-            return(Variable(0.0,0.0,""));
         double val = this->GetValue() / v.GetValue();
-        double err = MdError(*this,v);
+        double err = MdError(val,*this,v);
+        std::stringstream ss;
+        ss << this->GetUnits() << "/" << v.GetUnits();
         std::string unit = this->GetUnits();
-        return(Variable(val,err,unit));
+        return(Variable(val,err,ss.str()));
     };
-
         
     inline void SetValue(const double &a) {value_ = a;};
     inline void SetError(const double &a) {error_ = a;};
@@ -121,7 +117,7 @@ private:
         if(u1 == u2)
             return(true);
         else {
-            std::cerr << "WARNING!!!!! You are trying to compare two variables "
+            std::cerr << "WARNING!!!!! You are trying to operate on two variables "
                       << "that have different units!!!" << std::endl
                       << u1 << " != " << u2 << std::endl;
             return(false);
@@ -131,8 +127,8 @@ private:
     double PmError(const double &val1, const double &val2) {
         return(sqrt(val1*val1+val2*val2));
     };
-    double MdError(const Variable &v1, const Variable &v2) {
-        return(v1.GetValue()*v2.GetValue()*
+    double MdError(const double &val, const Variable &v1, const Variable &v2) {
+        return(val*
                sqrt(v1.GetError()*v1.GetError()/v1.GetValue()/v1.GetValue() +
                     v2.GetError()*v2.GetError()/v2.GetValue()/v2.GetValue()));
     }
