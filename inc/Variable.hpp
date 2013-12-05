@@ -109,6 +109,12 @@ public:
         ss << value_ << " +- " << error_ << " " << units_; 
         return(ss.str());
     };
+
+    inline std::string OutputData(void) const {
+        std::stringstream ss;
+        ss << value_ << " " << error_; 
+        return(ss.str());
+    };
 private:
     double value_, error_;
     std::string units_;
