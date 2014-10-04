@@ -39,42 +39,42 @@ public:
     ~Variable(){};
 
     //Overloading the comparison operators here
-    inline bool operator== (const Variable &v) {
+    inline bool operator== (const Variable &v) const {
         if(UnitCheck(this->GetUnits(), v.GetUnits()))
             return(this->GetValue() == v.GetValue());
         else
             return(false);
-    };
-    inline bool operator!= (const Variable &v){
+    }; const
+    inline bool operator!= (const Variable &v) const {
         return(!(*this==v));
     };
-    inline bool operator> (const Variable &v2){
+    inline bool operator> (const Variable &v2) const {
         if(UnitCheck(this->GetUnits(), v2.GetUnits()))
             return(this->GetValue() > v2.GetValue());
         else
             return(false);
-    };
-    inline bool operator< (const Variable &v){
+    }; const
+    inline bool operator< (const Variable &v) const {
         if(UnitCheck(this->GetUnits(), v.GetUnits()))
             return(this->GetValue() < v.GetValue());
         else
             return(false);
-    };
-    inline bool operator<= (const Variable &v){
+    }; const
+    inline bool operator<= (const Variable &v) const {
         if(UnitCheck(this->GetUnits(), v.GetUnits()))
             return(this->GetValue() <= v.GetValue());
         else
             return(false);
-    };
-    inline bool operator>= (const Variable &v){
+    }; const
+    inline bool operator>= (const Variable &v) const {
         if(UnitCheck(this->GetUnits(), v.GetUnits()))
             return(this->GetValue() >= v.GetValue());
         else
             return(false);
-    };
+    }; const
 
     //Overloading the Unitary operators here
-    inline Variable operator+(const Variable&v) {
+    inline Variable operator+(const Variable&v) const {
         if(!UnitCheck(this->GetUnits(), v.GetUnits()))
             return(Variable(0.0,0.0,""));
         double val = this->GetValue() + v.GetValue();
@@ -82,7 +82,7 @@ public:
         std::string unit = this->GetUnits();
         return(Variable(val,err,unit));
     };
-    inline Variable operator-(const Variable&v) {
+    inline Variable operator-(const Variable&v) const {
         if(!UnitCheck(this->GetUnits(), v.GetUnits()))
             return(Variable(0.0,0.0,""));
         double val = this->GetValue() - v.GetValue();
@@ -90,14 +90,14 @@ public:
         std::string unit = this->GetUnits();
         return(Variable(val,err,unit));
     };
-    inline Variable operator*(const Variable&v) {
+    inline Variable operator*(const Variable&v) const {
         double val = this->GetValue() * v.GetValue();
         double err = MdError(val,*this,v);
         std::stringstream ss;
         ss << this->GetUnits() << "*" << v.GetUnits();
         return(Variable(val,err,ss.str()));
     };
-    inline Variable operator/(const Variable&v) {
+    inline Variable operator/(const Variable&v) const {
         double val = this->GetValue() / v.GetValue();
         double err = MdError(val,*this,v);
         std::stringstream ss;
@@ -129,21 +129,22 @@ private:
     double value_, error_;
     std::string units_;
     
-    bool UnitCheck(const std::string &u1, const std::string &u2) {
+    bool UnitCheck(const std::string &u1, const std::string &u2) const {
         if(u1 == u2)
             return(true);
         else {
-            std::cerr << "WARNING!!!!! You are trying to operate on two variables "
-                      << "that have different units!!!" << std::endl
-                      << u1 << " != " << u2 << std::endl;
+            std::cerr << "WARNING!!!!! You are trying to operate on " 
+                      << "two variables that have different units!!!" 
+                      << std::endl << u1 << " != " << u2 << std::endl;
             return(false);
         }
     };
 
-    double PmError(const double &val1, const double &val2) {
+    double PmError(const double &val1, const double &val2) const {
         return(sqrt(val1*val1+val2*val2));
     };
-    double MdError(const double &val, const Variable &v1, const Variable &v2) {
+    double MdError(const double &val, const Variable &v1, 
+                   const Variable &v2) const {
         return(val*
                sqrt(v1.GetError()*v1.GetError()/v1.GetValue()/v1.GetValue() +
                     v2.GetError()*v2.GetError()/v2.GetValue()/v2.GetValue()));
