@@ -133,9 +133,9 @@ private:
         if(u1 == u2)
             return(true);
         else {
-            std::cerr << "WARNING!!!!! You are trying to operate on " 
-                      << "two variables that have different units!!!" 
-                      << std::endl << u1 << " != " << u2 << std::endl;
+            // std::cerr << "WARNING!!!!! You are trying to operate on " 
+            //           << "two variables that have different units!!!" 
+            //           << std::endl << u1 << " != " << u2 << std::endl;
             return(false);
         }
     };

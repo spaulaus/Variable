@@ -6,9 +6,6 @@ vpath %.cpp src/
 vpath %.hpp inc/
 vpath %.o obj/
 
-#Set some paths to install the shared objects to
-HEADER_INSTALL_PATH = /home/vincent/programs/include
-
 #Set some of the compile options
 CXX = g++
 CXXFLAGS = -fPIC -g -Wall $(CINCLUDEDIRS)
@@ -25,6 +22,9 @@ TESTO = test.o
 
 #Define the name of the header
 HEADER_NAME = Variable.hpp
+#Install Path
+HEADER_INSTALL_PATH = /home/vincent/programs/inc
+
 
 #Make the object list and prefix the object directory
 OBJS = $(TESTO) 
