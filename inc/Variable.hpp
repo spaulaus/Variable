@@ -30,6 +30,7 @@
 class Variable {
 public:
     Variable(){};
+
     Variable(const double &value, const double &error, 
              const std::string &units) {
         value_ = value;
@@ -82,6 +83,7 @@ public:
         std::string unit = this->GetUnits();
         return(Variable(val,err,unit));
     };
+
     inline Variable operator-(const Variable&v) const {
         if(!UnitCheck(this->GetUnits(), v.GetUnits()))
             return(Variable(0.0,0.0,""));
@@ -90,6 +92,7 @@ public:
         std::string unit = this->GetUnits();
         return(Variable(val,err,unit));
     };
+
     inline Variable operator*(const Variable&v) const {
         double val = this->GetValue() * v.GetValue();
         double err = MdError(val,*this,v);
@@ -97,6 +100,7 @@ public:
         ss << this->GetUnits() << "*" << v.GetUnits();
         return(Variable(val,err,ss.str()));
     };
+
     inline Variable operator/(const Variable&v) const {
         double val = this->GetValue() / v.GetValue();
         double err = MdError(val,*this,v);
@@ -105,6 +109,11 @@ public:
         std::string unit = this->GetUnits();
         return(Variable(val,err,ss.str()));
     };
+
+    friend std::ostream& operator<<(std::ostream& out, const Variable &v) {
+        out << std::to_string(v.GetValue()) << " +- " << std::to_string(v.GetError()) <<  " " << v.GetUnits() << " ";
+        return out;
+    }
         
     inline void SetValue(const double &a) {value_ = a;};
     inline void SetError(const double &a) {error_ = a;};
