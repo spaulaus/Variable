@@ -24,8 +24,8 @@ public:
     /// @param[in] value : The value that the variable has
     /// @param[in] error : The error on the units. We only accept symmetric error bars.
     /// @param[in] units : The units on the variable.
-    Variable(const double &value, const double &error,
-             const std::string &units) : value_(value), error_(error), units_(units) { };
+    Variable(const double &value, const double &error, const std::string &units)
+            : value_(value), error_(error), units_(units) { };
 
     /// Default Destructor
     ~Variable(){};
@@ -92,34 +92,27 @@ public:
     inline Variable operator-(const Variable&rhs) const {
         if(!UnitCheck(this->GetUnits(), rhs.GetUnits()))
             return(Variable(0.0,0.0,""));
-        double val = this->GetValue() - rhs.GetValue();
-        double err = CalculateAdditionSubtractionError(this->GetError(),rhs.GetError());
-        std::string unit = this->GetUnits();
-        return(Variable(val,err,unit));
+        return Variable(this->GetValue() - rhs.GetValue(),
+                        CalculateAdditionSubtractionError(this->GetError(),rhs.GetError()), this->GetUnits());
     }
 
     /// The multiplication operator. We currently concatenate the units and do not simplify them
     /// @param[in] rhs : The right hand side of our product
     /// @returns The product of the two variables, along with the error propagated appropriately.
     inline Variable operator*(const Variable&rhs) const {
-        double val = this->GetValue() * rhs.GetValue();
-        double err = CalculateMultiplicationDivisonError(val,*this,rhs);
-        std::stringstream ss;
-        ss << this->GetUnits() << "*" << rhs.GetUnits();
-        return(Variable(val,err,ss.str()));
+        return Variable(this->GetValue() * rhs.GetValue(),
+                        CalculateMultiplicationDivisonError(this->GetValue() * rhs.GetValue(),*this,rhs),
+                        this->GetUnits() + "*" + rhs.GetUnits());
     }
 
     /// The division operator. We currently concatenate the units and do not simplify them
     /// @param[in] rhs : The right hand side of our division
     /// @returns The quotient of the two variables, along with the error propagated appropriately.
     inline Variable operator/(const Variable&v) const {
-        double val = this->GetValue() / v.GetValue();
-        double err = CalculateMultiplicationDivisonError(val,*this,v);
-        std::stringstream ss;
-        ss << this->GetUnits() << "/" << v.GetUnits();
-        std::string unit = this->GetUnits();
-        return(Variable(val,err,ss.str()));
-    };
+        return Variable(this->GetValue() / rhs.GetValue(),
+                        CalculateMultiplicationDivisonError(this->GetValue() / rhs.GetValue(),*this,rhs),
+                        this->GetUnits() + "/" + rhs.GetUnits());
+    }
 
     /// The bitwise left shift operator, this operator is used so that we can output the variable to output streams
     /// like cout.
