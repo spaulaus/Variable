@@ -4,57 +4,54 @@
 ///@date November 11, 2013
 /// @copyright Copyright (c) 2017 S. V. Paulauskas.
 /// @copyright All rights reserved. Released under the Creative Commons Attribution-ShareAlike 4.0 International License
-#include <iostream>
+#include <UnitTest++.h>
 
 #include "Variable.hpp"
 
-using namespace std;
+static const double testValue1 = 3.0;
+static const double testError1 = 0.4;
+static const std::string testUnits1 = "MeV";
+static const Variable variable1(testValue1, testError1, testUnits1);
 
-int main () {
-    Variable var(123.45, 0.6789, "keV/MeV");
-    Variable var1(123.45, 0.0987, "keV/MeV");
-    Variable var2(123.45, 0.6789, "MeV");
-    Variable var3(123.45, 3465.84, "keV/MeV");
-    
-    cout << "The Current information for var: " << var << endl;
+static const double testValue2 = 5.0;
+static const double testError2 = 0.6;
+static const std::string testUnits2 = "MeV";
+static const Variable variable2(testValue2, testError2, testUnits2);
 
-    var.SetValue(987.65);
-    var.SetUnits("hbar/c/G");
+static const double tolerance = 0.00001;
 
-    cout << "The Updated information for var: " << var << endl;
+TEST (TestAdditionAndSubtraction) {
+    static const double expectedError = sqrt(testError1 * testError1 + testError2 * testError2);
+    static const Variable addSubtractTolerance(tolerance, 0, testUnits1);
 
-    cout << endl << "We are now going to try to compare things. " << endl;
-    bool temp =  var1 == var2;
-    cout << "Does var1 = " << var1 << " compare equal to var2 = " 
-         << var2 << "?!?!" << endl << "Answer: " << temp << endl; 
+    Variable expectedAddition(testValue1 + testValue2, expectedError, testUnits1);
+    CHECK_CLOSE(expectedAddition, variable1 + variable2, addSubtractTolerance);
 
-    bool temp1 = var1 == var3;
-    cout << endl
-         << "Does var1 = " << var1 << " compare equal to var3 = " 
-         << var3 << "?!?!" << endl << "Answer: " << temp1 << endl;
+    Variable expectedSubtraction(testValue1 - testValue2, expectedError, testUnits1);
+    CHECK_CLOSE(expectedSubtraction, variable1 - variable2, addSubtractTolerance);
+}
 
-    cout << "We are going to do some maths now." << endl;
-    Variable add = var1 + var2;
-    cout << add << endl;
-    
-    Variable add1 = var1 + var3;
-    cout << add1 << endl;
-    
-    Variable sub = var1 - var2;
-    cout << sub << endl;
-    
-    Variable sub1 = var1 - var3;
-    cout << sub1 << endl;
+TEST (TestMultiplication) {
+    static const std::string multiplicationUnits = testUnits1 + "*" + testUnits2;
+    static const Variable multiplyTolerance(tolerance, 0, multiplicationUnits);
 
-    Variable mult = var1 * var2;
-    cout << mult << endl;
-    
-    Variable mult1 = var1 * var3;
-    cout << mult1 << endl;
+    Variable expected(testValue1 * testValue2,
+                      testValue1 * testValue2 * sqrt(pow(testError1 / testValue1, 2) + pow(testError2 / testValue2, 2)),
+                      multiplicationUnits);
+    CHECK_CLOSE(expected, variable1 * variable2, multiplyTolerance);
+}
 
-    Variable div = var1 / var2;
-    cout << div << endl;
+TEST(TestDivision) {
+    static const std::string divisionUnits = testUnits1 + "/" + testUnits2;
+    static const Variable divisionTolerance(tolerance, 0, divisionUnits);
 
-    Variable div1 = var1 / var3;
-    cout << div1 << endl;
+    Variable expected(testValue1 / testValue2,
+                      (testValue1 / testValue2)
+                      * sqrt(pow(testError1 / testValue1, 2) + pow(testError2 / testValue2, 2)),
+                      divisionUnits);
+    CHECK_CLOSE(expected, variable1/variable2, divisionTolerance);
+}
+
+int main(int argc, char **argv) {
+    return UnitTest::RunAllTests();
 }
