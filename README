@@ -1,4 +1,0 @@
-This class is meant to handle variables for physics calculations. The variable includes
-the value, error, and units. 
-
-Make sure you change the install paths for the header.

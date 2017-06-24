@@ -49,4 +49,5 @@ find_package(UnitTest++ REQUIRED)
 link_directories(${UNITTEST++_LIBRARY_DIR})
 include_directories(${UNITTEST++_INCLUDE_DIR})
 
-add_subdirectory(source)
+include_directories(include)
+add_subdirectory(tests)
