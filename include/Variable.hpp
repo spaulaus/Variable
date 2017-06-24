@@ -8,7 +8,6 @@
 #define __VARIABLE_HPP__
 #include <iostream>
 #include <string>
-#include <sstream>
 
 #include <cmath>
 
@@ -108,7 +107,7 @@ public:
     /// The division operator. We currently concatenate the units and do not simplify them
     /// @param[in] rhs : The right hand side of our division
     /// @returns The quotient of the two variables, along with the error propagated appropriately.
-    inline Variable operator/(const Variable&v) const {
+    inline Variable operator/(const Variable&rhs) const {
         return Variable(this->GetValue() / rhs.GetValue(),
                         CalculateMultiplicationDivisonError(this->GetValue() / rhs.GetValue(),*this,rhs),
                         this->GetUnits() + "/" + rhs.GetUnits());
@@ -180,8 +179,8 @@ private:
     /// @param[in] rhs : The error bar on the right hand side
     /// @returns the propagated error bar on the variable
     double CalculateMultiplicationDivisonError(const double &val, const Variable &lhs, const Variable &rhs) const {
-        return val* sqrt(v1.GetError()*v1.GetError()/v1.GetValue()/v1.GetValue()
-                         + v2.GetError()*v2.GetError()/v2.GetValue()/v2.GetValue());
+        return val* sqrt(lhs.GetError()*lhs.GetError()/lhs.GetValue()/lhs.GetValue()
+                         + rhs.GetError()*rhs.GetError()/rhs.GetValue()/rhs.GetValue());
     }
 }; //class Variable
 #endif //__VARIABLE_HPP__
