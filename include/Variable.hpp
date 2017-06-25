@@ -2,8 +2,8 @@
 ///@brief A class that handles calculations of physically interesting numbers.
 ///@author S. V. Paulauskas
 ///@date November 09, 2013
-/// @copyright Copyright (c) 2013-2017 S. V. Paulauskas.
-/// @copyright All rights reserved. Released under the Creative Commons Attribution-ShareAlike 4.0 International License
+///@copyright Copyright (c) 2013-2017 S. V. Paulauskas.
+///@copyright All rights reserved. Released under the Creative Commons Attribution-ShareAlike 4.0 International License
 #ifndef __VARIABLE_HPP__
 #define __VARIABLE_HPP__
 

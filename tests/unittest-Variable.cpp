@@ -74,16 +74,15 @@ TEST (TestBitwiseOperators) {
                 + variable1.GetUnits(), testStream.str());
 }
 
-TEST(TestGettersAndSetters) {
-    Variable variable;
-    variable.SetValue(testValue1);
-    CHECK_EQUAL(testValue1, variable.GetValue());
+TEST_FIXTURE(Variable, TestGettersAndSetters) {
+    SetValue(testValue1);
+    CHECK_EQUAL(testValue1, GetValue());
 
-    variable.SetError(testError1);
-    CHECK_EQUAL(testError1, variable.GetError());
+    SetError(testError1);
+    CHECK_EQUAL(testError1, GetError());
 
-    variable.SetUnits(testUnits1);
-    CHECK_EQUAL(testUnits1, variable.GetUnits());
+    SetUnits(testUnits1);
+    CHECK_EQUAL(testUnits1, GetUnits());
 }
 
 int main(int argc, char **argv) {

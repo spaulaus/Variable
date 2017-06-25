@@ -17,7 +17,11 @@ matrix:
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get -y install libunittest++-dev
+  - git clone https://github.com/unittest-cpp/unittest-cpp.git
+  - cd unittest-cpp/builds/
+  - cmake ../
+  - sudo make -j4 install
+  - cd ~/
 
 before_script:
   - mkdir build
