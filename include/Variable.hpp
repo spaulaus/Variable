@@ -6,7 +6,8 @@
 /// @copyright All rights reserved. Released under the Creative Commons Attribution-ShareAlike 4.0 International License
 #ifndef __VARIABLE_HPP__
 #define __VARIABLE_HPP__
-#include <iostream>
+
+#include <stdexcept>
 #include <string>
 
 #include <cmath>
@@ -17,70 +18,69 @@
 class Variable {
 public:
     /// Default constructor
-    Variable(){};
+    Variable() {}
 
     /// Constructor that sets all the values.
     /// @param[in] value : The value that the variable has
     /// @param[in] error : The error on the units. We only accept symmetric error bars.
     /// @param[in] units : The units on the variable.
     Variable(const double &value, const double &error, const std::string &units)
-            : value_(value), error_(error), units_(units) { };
+            : value_(value), error_(error), units_(units) {}
 
     /// Default Destructor
-    ~Variable(){};
+    ~Variable() {}
 
-    /// The Equality operator
+    /// The Equality operator. To make an accurate comparison we must compare objects with the same units.
     /// @param[in] rhs : The variable that we are going to be comparing against
     /// @returns True if the variables are equal
-    inline bool operator== (const Variable &rhs) const {
-        if(UnitCheck(this->GetUnits(), rhs.GetUnits()))
+    inline bool operator==(const Variable &rhs) const {
+        if (!UnitCheck(this->GetUnits(), rhs.GetUnits()))
+            throw std::invalid_argument("Variable::operator== : Cannot compare objects with different units! We have"
+                                        + this->GetUnits() + " and " + rhs.GetUnits());
             return this->GetValue() == rhs.GetValue();
-        return false;
-    }; const
+    }
 
     /// The Not Equality operator, just the negative of the equality operator
     /// @param[in] rhs : The Variable that we are going to be comparing with.
     /// @returns True if the variables are not equal
-    inline bool operator!= (const Variable &rhs) const { return !(*this==rhs); }
+    inline bool operator!=(const Variable &rhs) const { return !(*this == rhs); }
 
-    /// The Greater than operator
+    /// The Greater than operator. To make an accurate comparison we must compare objects with the same units.
     /// @param[in] rhs : The variable that we want to know if we're greater than.
     /// @returns True if we were greater than the RHS
-    inline bool operator> (const Variable &rhs) const {
-        if(UnitCheck(this->GetUnits(), rhs.GetUnits()))
-            return this->GetValue() > rhs.GetValue();
-        return false;
-    }; const
+    inline bool operator>(const Variable &rhs) const {
+        if (!UnitCheck(this->GetUnits(), rhs.GetUnits()))
+            throw std::invalid_argument("Variable: Cannot compare objects with different units! We have"
+                                        + this->GetUnits() + " and " + rhs.GetUnits());
+        return this->GetValue() > rhs.GetValue();
+    }
 
-    /// The less than operator
+    /// The less than operator.
     /// @param[in] rhs : The variable that we want to check if we're less than
     /// @returns True if we were less than the RHS
-    inline bool operator< (const Variable &rhs) const { return !(*this > rhs); }
+    inline bool operator<(const Variable &rhs) const { return rhs > *this; }
 
-    /// The Greater than or equal operator
+    /// The Greater than or equal operator.
     /// @param[in] rhs : The variable that we want to know if we're greater than or equal to
     /// @returns True if we were greater than the RHS.
-    inline bool operator>= (const Variable &rhs) const {
-        if(UnitCheck(this->GetUnits(), rhs.GetUnits()))
-            return this->GetValue() >= rhs.GetValue();
-        return false;
-    }; const
+    inline bool operator>=(const Variable &rhs) const { return !(*this < rhs); }
 
-    /// The less than or equal to operator
+    /// The less than or equal to operator.
     /// @param[in] rhs : The variable that we want to check if we're less than
     /// @returns True if we were less than the RHS
-    inline bool operator<= (const Variable &rhs) const { return !(*this >= rhs); }
+    inline bool operator<=(const Variable &rhs) const { return !(*this > rhs); }
 
     /// The addition operator. We can only add together variables that have matching units. Otherwise our
     /// calculations are not physically meaningful
     /// @param[in] rhs : The right hand side of our addition
     /// @throws invalid_argument if we did not have matching units
     /// @returns The sum of the two variables, along with the error propagated appropriately.
-    inline Variable operator+(const Variable&rhs) const {
-        if(!UnitCheck(this->GetUnits(), rhs.GetUnits()))
-            return(Variable(0.0,0.0,""));
+    inline Variable operator+(const Variable &rhs) const {
+        if (!UnitCheck(this->GetUnits(), rhs.GetUnits()))
+            throw std::invalid_argument("Variable : Cannot add objects with different units! We have "
+                                        + this->GetUnits() + " and " + rhs.GetUnits());
         return Variable(this->GetValue() + rhs.GetValue(),
-                        CalculateAdditionSubtractionError(this->GetError(),rhs.GetError()), this->GetUnits());
+                        CalculateAdditionSubtractionError(this->GetError(), rhs.GetError()), this->GetUnits());
     }
 
     /// The subtraction operator. We can only subtract variables that have matching units. Otherwise our
@@ -88,28 +88,29 @@ public:
     /// @param[in] rhs : The right hand side of our subtraction
     /// @throws invalid_argument if we did not have matching units
     /// @returns The sum of the two variables, along with the error propagated appropriately.
-    inline Variable operator-(const Variable&rhs) const {
-        if(!UnitCheck(this->GetUnits(), rhs.GetUnits()))
-            return(Variable(0.0,0.0,""));
+    inline Variable operator-(const Variable &rhs) const {
+        if (!UnitCheck(this->GetUnits(), rhs.GetUnits()))
+            throw std::invalid_argument("Variable : Cannot subtract objects with different units! We have "
+                                        + this->GetUnits() + " and " + rhs.GetUnits());
         return Variable(this->GetValue() - rhs.GetValue(),
-                        CalculateAdditionSubtractionError(this->GetError(),rhs.GetError()), this->GetUnits());
+                        CalculateAdditionSubtractionError(this->GetError(), rhs.GetError()), this->GetUnits());
     }
 
     /// The multiplication operator. We currently concatenate the units and do not simplify them
     /// @param[in] rhs : The right hand side of our product
     /// @returns The product of the two variables, along with the error propagated appropriately.
-    inline Variable operator*(const Variable&rhs) const {
+    inline Variable operator*(const Variable &rhs) const {
         return Variable(this->GetValue() * rhs.GetValue(),
-                        CalculateMultiplicationDivisonError(this->GetValue() * rhs.GetValue(),*this,rhs),
+                        CalculateMultiplicationDivisonError(this->GetValue() * rhs.GetValue(), *this, rhs),
                         this->GetUnits() + "*" + rhs.GetUnits());
     }
 
     /// The division operator. We currently concatenate the units and do not simplify them
     /// @param[in] rhs : The right hand side of our division
     /// @returns The quotient of the two variables, along with the error propagated appropriately.
-    inline Variable operator/(const Variable&rhs) const {
+    inline Variable operator/(const Variable &rhs) const {
         return Variable(this->GetValue() / rhs.GetValue(),
-                        CalculateMultiplicationDivisonError(this->GetValue() / rhs.GetValue(),*this,rhs),
+                        CalculateMultiplicationDivisonError(this->GetValue() / rhs.GetValue(), *this, rhs),
                         this->GetUnits() + "/" + rhs.GetUnits());
     }
 
@@ -118,34 +119,34 @@ public:
     /// @param[in] out : The output file stream that we want to use
     /// @param[in] v : The variable that we want to output to the stream.
     /// @returns A reference to the stream that we passed into the method.
-    friend std::ostream& operator<<(std::ostream& out, const Variable &v) {
-        out << std::to_string(v.GetValue()) << " +- " << std::to_string(v.GetError()) <<  " " << v.GetUnits() << " ";
+    friend std::ostream &operator<<(std::ostream &out, const Variable &v) {
+        out << std::to_string(v.GetValue()) << " +- " << std::to_string(v.GetError()) << " " << v.GetUnits() << " ";
         return out;
     }
 
     /// Sets the value of the variable
     /// @param[in] a : The value to set
-    inline void SetValue(const double &a) {value_ = a;}
+    inline void SetValue(const double &a) { value_ = a; }
 
     /// Sets the error on the variable
     /// @param[in] a : The value to set
-    inline void SetError(const double &a) {error_ = a;}
+    inline void SetError(const double &a) { error_ = a; }
 
     /// Sets the units on the variable
     /// @param[in] a : The value to set
-    inline void SetUnits(const std::string &a) {units_ = a;}
+    inline void SetUnits(const std::string &a) { units_ = a; }
 
     /// Get the value of the Variable
     /// @returns the value
-    inline double GetValue(void) const {return value_; }
+    inline double GetValue(void) const { return value_; }
 
     /// Get the value of the error
     /// @returns the error bars
-    inline double GetError(void) const {return error_;}
+    inline double GetError(void) const { return error_; }
 
     /// Get the value of the Variable
     /// @returns the value
-    inline std::string GetUnits(void) const {return units_;}
+    inline std::string GetUnits(void) const { return units_; }
 
 private:
     double value_; ///< The value of the Variable
@@ -156,21 +157,21 @@ private:
     ///@param[in] u1 : The units on the LHS
     ///@param[in] u2 : The units on the RHS
     bool UnitCheck(const std::string &lhs, const std::string &rhs) const {
-        if(lhs == rhs)
+        if (lhs == rhs)
             return true;
         // std::cerr << "WARNING!!!!! You are trying to operate on "
         //           << "two variables that have different units!!!"
         //           << std::endl << u1 << " != " << u2 << std::endl;
         return false;
-    };
+    }
 
     /// Propagates the error on addition and subtraction operations.
     /// @param[in] lhs : The error bar on the left hand side
     /// @param[in] rhs : The error bar on the right hand side
     /// @returns the propagated error bar on the variable
     double CalculateAdditionSubtractionError(const double &lhs, const double &rhs) const {
-        return sqrt(lhs*lhs + rhs*rhs);
-    };
+        return sqrt(lhs * lhs + rhs * rhs);
+    }
 
     /// Propagates the error on addition and subtraction operations.
     /// @param[in] val : The value of the original multiplication or division operation. This needs multiplied in to
@@ -179,8 +180,7 @@ private:
     /// @param[in] rhs : The error bar on the right hand side
     /// @returns the propagated error bar on the variable
     double CalculateMultiplicationDivisonError(const double &val, const Variable &lhs, const Variable &rhs) const {
-        return val* sqrt(lhs.GetError()*lhs.GetError()/lhs.GetValue()/lhs.GetValue()
-                         + rhs.GetError()*rhs.GetError()/rhs.GetValue()/rhs.GetValue());
+        return val * sqrt(pow(lhs.GetError() / lhs.GetValue(), 2) + pow(rhs.GetError() / rhs.GetValue(), 2));
     }
 }; //class Variable
 #endif //__VARIABLE_HPP__
