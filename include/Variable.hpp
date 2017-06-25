@@ -120,7 +120,7 @@ public:
     /// @param[in] v : The variable that we want to output to the stream.
     /// @returns A reference to the stream that we passed into the method.
     friend std::ostream &operator<<(std::ostream &out, const Variable &v) {
-        out << std::to_string(v.GetValue()) << " +- " << std::to_string(v.GetError()) << " " << v.GetUnits() << " ";
+        out << std::to_string(v.GetValue()) << " +- " << std::to_string(v.GetError()) << " " << v.GetUnits();
         return out;
     }
 
