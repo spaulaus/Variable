@@ -37,7 +37,7 @@ public:
         if (this->GetUnits() != rhs.GetUnits())
             throw std::invalid_argument("Variable::operator== : Cannot compare objects with different units! We have"
                                         + this->GetUnits() + " and " + rhs.GetUnits());
-            return this->GetValue() == rhs.GetValue();
+        return this->GetValue() == rhs.GetValue();
     }
 
     /// The Not Equality operator, just the negative of the equality operator
@@ -152,7 +152,7 @@ private:
     double value_; ///< The value of the Variable
     double error_; ///< The error on the Variable
     std::string units_; ///< The units on the Variable
-    
+
     /// Propagates the error on addition and subtraction operations.
     /// @param[in] lhs : The error bar on the left hand side
     /// @param[in] rhs : The error bar on the right hand side
