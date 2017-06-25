@@ -1,19 +1,15 @@
 language: cpp
 sudo: required
 dist: trusty
-
-matrix:
-  include:
-    # works on Precise and Trusty
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-         - MATRIX_EVAL="export CC=gcc-5 && export CXX=g++-5"
+os: linux
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-5
+    env:
+      - export CC=gcc-5 && export CXX=g++-5
 
 before_install:
   - sudo apt-get -qq update
@@ -21,11 +17,10 @@ before_install:
   - cd unittest-cpp/builds/
   - cmake ../
   - sudo make -j4 install
-  - cd ~/
+  - cd ../../
 
 before_script:
-  - rm -rf build
-  - mkdir build
+  - rm -rf build && mkdir build
   - cd build
   - cmake ../
 
