@@ -74,6 +74,17 @@ TEST (TestBitwiseOperators) {
                 + variable1.GetUnits(), testStream.str());
 }
 
+TEST_FIXTURE(Variable, TestGettersAndSetters) {
+    SetValue(testValue1);
+    CHECK_EQUAL(testValue1, GetValue());
+
+    SetError(testError1);
+    CHECK_EQUAL(testError1, GetError());
+
+    SetUnits(testUnits1);
+    CHECK_EQUAL(testUnits1, GetUnits());
+}
+
 int main(int argc, char **argv) {
     return UnitTest::RunAllTests();
 }
