@@ -14,10 +14,10 @@ matrix:
             - g++-5
       env:
          - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-         
+
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install libunittest++-dev -y
+  - sudo apt-get -y install libunittest++-dev
 
 before_script:
   - mkdir build
