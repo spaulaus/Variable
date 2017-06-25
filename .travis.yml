@@ -13,7 +13,7 @@ matrix:
           packages:
             - g++-5
       env:
-         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+         - MATRIX_EVAL="export CC=gcc-5 && export CXX=g++-5"
 
 before_install:
   - sudo apt-get -qq update
@@ -31,3 +31,7 @@ before_script:
 script:
   - make -j4
   - ./tests/unittest-Variable
+
+after_script:
+  - cd ../
+  - rm -rf build
