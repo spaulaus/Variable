@@ -34,7 +34,7 @@ public:
     /// @param[in] rhs : The variable that we are going to be comparing against
     /// @returns True if the variables are equal
     inline bool operator==(const Variable &rhs) const {
-        if (!UnitCheck(this->GetUnits(), rhs.GetUnits()))
+        if (this->GetUnits() != rhs.GetUnits())
             throw std::invalid_argument("Variable::operator== : Cannot compare objects with different units! We have"
                                         + this->GetUnits() + " and " + rhs.GetUnits());
             return this->GetValue() == rhs.GetValue();
@@ -49,7 +49,7 @@ public:
     /// @param[in] rhs : The variable that we want to know if we're greater than.
     /// @returns True if we were greater than the RHS
     inline bool operator>(const Variable &rhs) const {
-        if (!UnitCheck(this->GetUnits(), rhs.GetUnits()))
+        if (this->GetUnits() != rhs.GetUnits())
             throw std::invalid_argument("Variable: Cannot compare objects with different units! We have"
                                         + this->GetUnits() + " and " + rhs.GetUnits());
         return this->GetValue() > rhs.GetValue();
@@ -76,7 +76,7 @@ public:
     /// @throws invalid_argument if we did not have matching units
     /// @returns The sum of the two variables, along with the error propagated appropriately.
     inline Variable operator+(const Variable &rhs) const {
-        if (!UnitCheck(this->GetUnits(), rhs.GetUnits()))
+        if (this->GetUnits() != rhs.GetUnits())
             throw std::invalid_argument("Variable : Cannot add objects with different units! We have "
                                         + this->GetUnits() + " and " + rhs.GetUnits());
         return Variable(this->GetValue() + rhs.GetValue(),
@@ -89,7 +89,7 @@ public:
     /// @throws invalid_argument if we did not have matching units
     /// @returns The sum of the two variables, along with the error propagated appropriately.
     inline Variable operator-(const Variable &rhs) const {
-        if (!UnitCheck(this->GetUnits(), rhs.GetUnits()))
+        if (this->GetUnits() != rhs.GetUnits())
             throw std::invalid_argument("Variable : Cannot subtract objects with different units! We have "
                                         + this->GetUnits() + " and " + rhs.GetUnits());
         return Variable(this->GetValue() - rhs.GetValue(),
@@ -152,19 +152,7 @@ private:
     double value_; ///< The value of the Variable
     double error_; ///< The error on the Variable
     std::string units_; ///< The units on the Variable
-
-    /// Provides a check on the units for situations where we are adding or subtracting
-    ///@param[in] u1 : The units on the LHS
-    ///@param[in] u2 : The units on the RHS
-    bool UnitCheck(const std::string &lhs, const std::string &rhs) const {
-        if (lhs == rhs)
-            return true;
-        // std::cerr << "WARNING!!!!! You are trying to operate on "
-        //           << "two variables that have different units!!!"
-        //           << std::endl << u1 << " != " << u2 << std::endl;
-        return false;
-    }
-
+    
     /// Propagates the error on addition and subtraction operations.
     /// @param[in] lhs : The error bar on the left hand side
     /// @param[in] rhs : The error bar on the right hand side
