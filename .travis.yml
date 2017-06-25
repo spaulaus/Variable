@@ -24,6 +24,7 @@ before_install:
   - cd ~/
 
 before_script:
+  - rm -rf build
   - mkdir build
   - cd build
   - cmake ../
