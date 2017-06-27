@@ -40,11 +40,24 @@ TEST (TestArithmeticOperators) {
     CHECK_THROW(throwTester - variable1, invalid_argument);
 
     static const string multiplicationUnits = "MeV*MeV";
-    CHECK_CLOSE(Variable(15, 2.69072, multiplicationUnits), variable1 * variable2,
-                Variable(tolerance, 0, multiplicationUnits));
+    Variable expectedMultiplication(15, 2.69072, multiplicationUnits);
+    CHECK_CLOSE(expectedMultiplication, variable1 * variable2, Variable(tolerance, 0, multiplicationUnits));
 
     static const string divisionUnits = "MeV/MeV";
-    CHECK_CLOSE(Variable(0.6, 0.10763, divisionUnits), variable1/variable2, Variable(tolerance, 0, divisionUnits));
+    Variable expectedDivision(0.6, 0.10763, divisionUnits);
+    CHECK_CLOSE(expectedDivision, variable1/variable2, Variable(tolerance, 0, divisionUnits));
+
+    Variable testCompoundAdd = variable1;
+    CHECK_CLOSE(expectedAddition, testCompoundAdd += variable2, addSubtractTolerance);
+
+    Variable testCompoundSubtract = variable1;
+    CHECK_CLOSE(expectedSubtraction, testCompoundSubtract -= variable2, addSubtractTolerance);
+
+    Variable testCompoundMultiply = variable1;
+    CHECK_CLOSE(expectedMultiplication, testCompoundMultiply *= variable2, Variable(tolerance, 0, multiplicationUnits));
+
+    Variable testCompoundDivide = variable1;
+    CHECK_CLOSE(expectedDivision, testCompoundDivide /= variable2, Variable(tolerance, 0, divisionUnits));
 }
 
 TEST (TestComparisonOperators) {

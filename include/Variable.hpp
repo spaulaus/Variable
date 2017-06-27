@@ -71,48 +71,92 @@ public:
     /// @returns True if we were less than the RHS
     inline bool operator<=(const Variable &rhs) const { return !(*this > rhs); }
 
+    /// The compound addition operator. We can only add together variables that have matching units. Otherwise our
+    /// calculations are not physically meaningful
+    /// @param[in] rhs : The right hand side of our addition
+    /// @throws invalid_argument if we did not have matching units
+    /// @returns The sum of the two variables
+    inline Variable &operator+=(const Variable &rhs) {
+        if (this->GetUnits() != rhs.GetUnits())
+            throw std::invalid_argument("Variable : Cannot add objects with different units! We have "
+                                        + this->GetUnits() + " and " + rhs.GetUnits());
+        this->SetValue(this->GetValue() + rhs.GetValue());
+        this->SetError(CalculateAdditionSubtractionError(this->GetError(), rhs.GetError()));
+        return *this;
+    }
+
     /// The addition operator. We can only add together variables that have matching units. Otherwise our
     /// calculations are not physically meaningful
     /// @param[in] rhs : The right hand side of our addition
     /// @throws invalid_argument if we did not have matching units
     /// @returns The sum of the two variables, along with the error propagated appropriately.
     inline Variable operator+(const Variable &rhs) const {
-        if (this->GetUnits() != rhs.GetUnits())
-            throw std::invalid_argument("Variable : Cannot add objects with different units! We have "
-                                        + this->GetUnits() + " and " + rhs.GetUnits());
-        return Variable(this->GetValue() + rhs.GetValue(),
-                        CalculateAdditionSubtractionError(this->GetError(), rhs.GetError()), this->GetUnits());
+        Variable lhs = *this;
+        lhs += rhs;
+        return lhs;
     }
 
     /// The subtraction operator. We can only subtract variables that have matching units. Otherwise our
     /// calculations are not physically meaningful
     /// @param[in] rhs : The right hand side of our subtraction
     /// @throws invalid_argument if we did not have matching units
-    /// @returns The sum of the two variables, along with the error propagated appropriately.
-    inline Variable operator-(const Variable &rhs) const {
+    /// @returns The difference of the two variables, along with the error propagated appropriately.
+    inline Variable &operator-=(const Variable &rhs) {
         if (this->GetUnits() != rhs.GetUnits())
             throw std::invalid_argument("Variable : Cannot subtract objects with different units! We have "
                                         + this->GetUnits() + " and " + rhs.GetUnits());
-        return Variable(this->GetValue() - rhs.GetValue(),
-                        CalculateAdditionSubtractionError(this->GetError(), rhs.GetError()), this->GetUnits());
+        this->SetValue(this->GetValue() - rhs.GetValue());
+        this->SetError(CalculateAdditionSubtractionError(this->GetError(), rhs.GetError()));
+        return *this;
+    }
+
+    /// The subtraction operator. We can only subtract variables that have matching units. Otherwise our
+    /// calculations are not physically meaningful
+    /// @param[in] rhs : The right hand side of our subtraction
+    /// @throws invalid_argument if we did not have matching units
+    /// @returns The difference of the two variables, along with the error propagated appropriately.
+    inline Variable operator-(const Variable &rhs) const {
+        Variable lhs = *this;
+        lhs -= rhs;
+        return lhs;
+    }
+
+    /// The compound multiplication operator. We currently concatenate the units and do not simplify them
+    /// @param[in] rhs : The right hand side of our product
+    /// @returns The product of the two variables, along with the error propagated appropriately.
+    inline Variable &operator*=(const Variable &rhs) {
+        this->SetValue(this->GetValue() * rhs.GetValue());
+        this->SetError(CalculateMultiplicationDivisonError(this->GetValue(), *this, rhs));
+        this->SetUnits(this->GetUnits() + "*" + rhs.GetUnits());
+        return *this;
     }
 
     /// The multiplication operator. We currently concatenate the units and do not simplify them
     /// @param[in] rhs : The right hand side of our product
     /// @returns The product of the two variables, along with the error propagated appropriately.
     inline Variable operator*(const Variable &rhs) const {
-        return Variable(this->GetValue() * rhs.GetValue(),
-                        CalculateMultiplicationDivisonError(this->GetValue() * rhs.GetValue(), *this, rhs),
-                        this->GetUnits() + "*" + rhs.GetUnits());
+        Variable lhs = *this;
+        lhs *= rhs;
+        return lhs;
+    }
+
+    /// The compound division operator. We currently concatenate the units and do not simplify them
+    /// @param[in] rhs : The right hand side of our division
+    /// @returns The quotient of the two variables, along with the error propagated appropriately.
+    inline Variable &operator/=(const Variable &rhs) {
+        this->SetValue(this->GetValue() / rhs.GetValue());
+        this->SetError(CalculateMultiplicationDivisonError(this->GetValue(), *this, rhs));
+        this->SetUnits(this->GetUnits() + "/" + rhs.GetUnits());
+        return *this;
     }
 
     /// The division operator. We currently concatenate the units and do not simplify them
     /// @param[in] rhs : The right hand side of our division
     /// @returns The quotient of the two variables, along with the error propagated appropriately.
     inline Variable operator/(const Variable &rhs) const {
-        return Variable(this->GetValue() / rhs.GetValue(),
-                        CalculateMultiplicationDivisonError(this->GetValue() / rhs.GetValue(), *this, rhs),
-                        this->GetUnits() + "/" + rhs.GetUnits());
+        Variable lhs = *this;
+        lhs /= rhs;
+        return lhs;
     }
 
     /// The bitwise left shift operator, this operator is used so that we can output the variable to output streams
