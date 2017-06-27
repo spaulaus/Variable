@@ -4,12 +4,12 @@
 ///@date November 11, 2013
 /// @copyright Copyright (c) 2017 S. V. Paulauskas.
 /// @copyright All rights reserved. Released under the Creative Commons Attribution-ShareAlike 4.0 International License
+#include "Variable.hpp"
+
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
 #include <UnitTest++.h>
-
-#include "Variable.hpp"
 
 using namespace std;
 

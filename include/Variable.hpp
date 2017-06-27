@@ -7,6 +7,7 @@
 #ifndef __VARIABLE_HPP__
 #define __VARIABLE_HPP__
 
+#include <iostream>
 #include <stdexcept>
 #include <string>
 
