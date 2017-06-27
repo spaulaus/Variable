@@ -125,6 +125,13 @@ public:
         return out;
     }
 
+    /// A method that will allow one to output just the value and error, this is useful when writing simple data
+    /// files to disk.
+    /// @returns A string containing the value, a space, and the error.
+    std::string OutputForDataFile(void) const {
+        return std::to_string(this->GetValue()) + " " + std::to_string(this->GetError());
+    }
+
     /// Sets the value of the variable
     /// @param[in] a : The value to set
     inline void SetValue(const double &a) { value_ = a; }

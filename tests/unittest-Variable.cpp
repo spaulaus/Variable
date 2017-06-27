@@ -85,6 +85,10 @@ TEST_FIXTURE(Variable, TestGettersAndSetters) {
     CHECK_EQUAL(testUnits1, GetUnits());
 }
 
+TEST(TestOutputToDataFile){
+    CHECK_EQUAL(to_string(testValue1) + " " + to_string(testError1), variable1.OutputForDataFile());
+}
+
 int main(int argc, char **argv) {
     return UnitTest::RunAllTests();
 }
