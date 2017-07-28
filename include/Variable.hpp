@@ -140,6 +140,26 @@ public:
         return lhs;
     }
 
+    /// The templated compound multiplication operator. We currently concatenate the units and do not simplify them
+    /// @param[in] rhs : The right hand side of our product, which can be any standard c++ class (int, double, etc.).
+    /// @returns The product of the two variables, along with the error propagated appropriately.
+    template <class T>
+    inline Variable &operator*=(const T &rhs) {
+        this->SetValue(this->GetValue() * rhs);
+        this->SetError(this->GetError() * rhs);
+        return *this;
+    }
+
+    /// The templated multiplication operator. We currently concatenate the units and do not simplify them
+    /// @param[in] rhs : The right hand side of our product, which can be any standard c++ class (int, double, etc.).
+    /// @returns The product of the two variables, along with the error propagated appropriately.
+    template <class T>
+    inline Variable operator*(const T &rhs) const {
+        Variable lhs = *this;
+        lhs *= rhs;
+        return lhs;
+    }
+
     /// The compound division operator. We currently concatenate the units and do not simplify them
     /// @param[in] rhs : The right hand side of our division
     /// @returns The quotient of the two variables, along with the error propagated appropriately.
@@ -154,6 +174,26 @@ public:
     /// @param[in] rhs : The right hand side of our division
     /// @returns The quotient of the two variables, along with the error propagated appropriately.
     inline Variable operator/(const Variable &rhs) const {
+        Variable lhs = *this;
+        lhs /= rhs;
+        return lhs;
+    }
+
+    /// The templated compound division operator. We currently concatenate the units and do not simplify them
+    /// @param[in] rhs : The right hand side of our product, which can be any standard c++ class (int, double, etc.).
+    /// @returns The quotient of the two variables, along with the error propagated appropriately.
+    template <class T>
+    inline Variable &operator/=(const T &rhs) {
+        this->SetValue(this->GetValue() / rhs);
+        this->SetError(this->GetError() / rhs);
+        return *this;
+    }
+
+    /// The templated division operator. We currently concatenate the units and do not simplify them
+    /// @param[in] rhs : The right hand side of our product, which can be any standard c++ class (int, double, etc.).
+    /// @returns The quotient of the two variables, along with the error propagated appropriately.
+    template <class T>
+    inline Variable operator/(const T &rhs) const {
         Variable lhs = *this;
         lhs /= rhs;
         return lhs;

@@ -43,9 +43,15 @@ TEST (TestArithmeticOperators) {
     Variable expectedMultiplication(15, 2.69072, multiplicationUnits);
     CHECK_CLOSE(expectedMultiplication, variable1 * variable2, Variable(tolerance, 0, multiplicationUnits));
 
+    CHECK_EQUAL(Variable(15, 2, testUnits1), Variable(testValue1, testError1, testUnits1) * testValue2);
+    CHECK_EQUAL(Variable(15, 2, testUnits1), Variable(testValue1, testError1, testUnits1) * 5);
+
     static const string divisionUnits = "MeV/MeV";
     Variable expectedDivision(0.6, 0.10763, divisionUnits);
     CHECK_CLOSE(expectedDivision, variable1/variable2, Variable(tolerance, 0, divisionUnits));
+
+    CHECK_EQUAL(Variable(0.6, 0.08, testUnits1), Variable(testValue1, testError1, testUnits1) / testValue2);
+    CHECK_EQUAL(Variable(0.6, 0.08, testUnits1), Variable(testValue1, testError1, testUnits1) / testValue2);
 
     Variable testCompoundAdd = variable1;
     CHECK_CLOSE(expectedAddition, testCompoundAdd += variable2, addSubtractTolerance);
